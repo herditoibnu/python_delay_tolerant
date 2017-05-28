@@ -21,7 +21,7 @@ def sendfeedback():
         msg = server.recv(10240)
         msg = pickle.loads(msg)
         print msg[0]
-        print msg[1]
+        # print msg[1]
         client.sendto("pesan diterima", (MCAST_GRP, MCAST_PORT))
         break
 

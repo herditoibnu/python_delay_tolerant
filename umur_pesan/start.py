@@ -34,7 +34,7 @@ def recvfeedback(t1, limit_sec):
             break
 
 t1 = datetime.now()
-limit_sec = 100
+limit_sec = 100 # Umur pesan (detik)
 
 threads = []
 t_recvfeedback = threading.Thread(target=recvfeedback, args=(t1, limit_sec,))
@@ -43,7 +43,7 @@ t_recvfeedback.start()
 
 def init_msg():
     msg = []
-    msg.append("Halo")
+    msg.append("Halo") # Pesan yang dikirim
     msg.append(limit_sec_new)
     msg = pickle.dumps(msg)
     return msg

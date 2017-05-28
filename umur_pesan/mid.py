@@ -29,6 +29,7 @@ def recvfeedback(t1, val):
     while True:
         t2 = datetime.now()
         diff_sec = t2 - t1
+        global limit_sec_new
         limit_sec_new = limit_sec - diff_sec.seconds
         if diff_sec.seconds == limit_sec:
             print "Masa berlaku pesan habis"
@@ -43,9 +44,10 @@ def recvfeedback(t1, val):
 
 def sendfeedback():
     while True:
-        global msg
         msg = server.recv(10240)
         msg_recv = pickle.loads(msg)
+        global message
+        message = msg_recv[0]
         global limit_sec
         limit_sec = msg_recv[1]
         print limit_sec
@@ -62,6 +64,13 @@ t_sendfeedback.start()
 flag_thread_send = 1
 flag_thread_recv = 0
 flag_thread_sec = 1
+
+def init_msg():
+    msg = []
+    msg.append(message)
+    msg.append(limit_sec_new)
+    msg = pickle.dumps(msg)
+    return msg
 
 while True:
     if not t_sendfeedback.is_alive() and flag_thread_send:
@@ -80,7 +89,7 @@ while True:
         t_recvfeedback.start()
 
     try:
-        client.sendto(msg, (MCAST_GRP, MCAST_PORT))
+        client.sendto(init_msg(), (MCAST_GRP, MCAST_PORT))
         if messageExpired:
             break
         if countCek == 2:
