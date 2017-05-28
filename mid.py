@@ -31,7 +31,6 @@ def recvfeedback(t1, val):
         diff_sec = t2 - t1
         limit_sec_new = limit_sec - diff_sec.seconds
         if diff_sec.seconds == limit_sec:
-            print "kljjl"
             print "Masa berlaku pesan habis"
             messageExpired = 1
             break
@@ -68,8 +67,6 @@ while True:
     if not t_sendfeedback.is_alive() and flag_thread_send:
         flag_thread_send = 0
         flag_thread_recv = 1
-        print "Cek"
-        print "HAHAHHA"
         t_recvfeedback = threading.Thread(target=recvfeedback, args=(t1,1,))
         threads.append(t_recvfeedback)
         t_recvfeedback.start()
@@ -81,18 +78,12 @@ while True:
         t_recvfeedback = threading.Thread(target=recvfeedback, args=(t1,2,))
         threads.append(t_recvfeedback)
         t_recvfeedback.start()
-        print "sdafmsdkgka"
 
     try:
         client.sendto(msg, (MCAST_GRP, MCAST_PORT))
         if messageExpired:
             break
-
         if countCek == 2:
             break
-        # t_recvfeedback = threading.Thread(target=recvfeedback, args=(t1,))
-        # threads.append(t_recvfeedback)
-        # t_recvfeedback.start()
-        # break
     except NameError:
         continue
