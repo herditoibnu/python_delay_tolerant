@@ -34,7 +34,7 @@ def recvfeedback(t1, limit_sec):
             break
 
 t1 = datetime.now()
-limit_sec = 10
+limit_sec = 100
 
 threads = []
 t_recvfeedback = threading.Thread(target=recvfeedback, args=(t1, limit_sec,))
