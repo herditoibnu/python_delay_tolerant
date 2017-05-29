@@ -45,6 +45,7 @@ def init_msg():
     msg = []
     msg.append("Halo") # Pesan yang dikirim
     msg.append(limit_sec_new)
+    msg.append("Roni") # Tujuan pesan
     msg = pickle.dumps(msg)
     return msg
 

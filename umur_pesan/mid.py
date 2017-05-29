@@ -34,7 +34,6 @@ def recvfeedback(t1, val):
             print "Masa berlaku pesan habis"
             messageExpired = 1
             break
-
         flag = server.recv(10240)
         if flag == "pesan diteruskan" or flag == "pesan diterima":
             print flag
@@ -49,6 +48,8 @@ def sendfeedback():
         message = msg_recv[0]
         global limit_sec
         limit_sec = msg_recv[1]
+        global dest
+        dest = msg_recv[2]
         print limit_sec
         client.sendto("pesan diteruskan", (MCAST_GRP, MCAST_PORT))
         break
@@ -68,6 +69,7 @@ def init_msg():
     msg = []
     msg.append(message)
     msg.append(limit_sec_new)
+    msg.append(dest)
     msg = pickle.dumps(msg)
     return msg
 
@@ -88,6 +90,9 @@ while True:
         t_recvfeedback.start()
 
     try:
+        if dest == "Roni": # Tujuan pesan
+            print message
+            break
         client.sendto(init_msg(), (MCAST_GRP, MCAST_PORT))
         if messageExpired:
             break
