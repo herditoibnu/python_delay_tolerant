@@ -23,14 +23,13 @@ def countRecv(val):
     countCek = val
 
 def recvfeedback(t1, val):
-    global limit_sec_new
+    # global limit_sec_new
     global messageExpired
+    global hop_new
     messageExpired = 0
+    hop_new = hop - 1
     while True:
-        t2 = datetime.now()
-        diff_sec = t2 - t1
-        limit_sec_new = limit_sec - diff_sec.seconds
-        if diff_sec.seconds == limit_sec:
+        if hop_new == 0:
             print "Masa berlaku pesan habis"
             messageExpired = 1
             break
@@ -46,11 +45,11 @@ def sendfeedback():
         msg_recv = pickle.loads(msg)
         global message
         message = msg_recv[0]
-        global limit_sec
-        limit_sec = msg_recv[1]
+        global hop
+        hop = msg_recv[1]
         global dest
         dest = msg_recv[2]
-        print limit_sec
+        print hop
         client.sendto("pesan diteruskan", (MCAST_GRP, MCAST_PORT))
         break
 
@@ -68,7 +67,7 @@ flag_thread_sec = 1
 def init_msg():
     msg = []
     msg.append(message)
-    msg.append(limit_sec_new)
+    msg.append(hop_new)
     msg.append(dest)
     msg = pickle.dumps(msg)
     return msg
@@ -90,7 +89,7 @@ while True:
         t_recvfeedback.start()
 
     try:
-        if dest == "a": # Tujuan pesan
+        if dest == "Roni": # Tujuan pesan
             print message
             break
         client.sendto(init_msg(), (MCAST_GRP, MCAST_PORT))
