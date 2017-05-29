@@ -25,7 +25,7 @@ def recvfeedback():
             print flag
             break
 
-hop = 3 # Umur pesan (detik)
+hop = 3 # Jml hop
 
 threads = []
 t_recvfeedback = threading.Thread(target=recvfeedback)

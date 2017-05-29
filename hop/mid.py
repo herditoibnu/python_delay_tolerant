@@ -23,7 +23,6 @@ def countRecv(val):
     countCek = val
 
 def recvfeedback(t1, val):
-    # global limit_sec_new
     global messageExpired
     global hop_new
     messageExpired = 0
