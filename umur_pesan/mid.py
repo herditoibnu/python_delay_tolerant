@@ -29,7 +29,6 @@ def recvfeedback(t1, val):
     while True:
         t2 = datetime.now()
         diff_sec = t2 - t1
-        global limit_sec_new
         limit_sec_new = limit_sec - diff_sec.seconds
         if diff_sec.seconds == limit_sec:
             print "Masa berlaku pesan habis"
