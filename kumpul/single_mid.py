@@ -5,6 +5,18 @@ import pickle
 from datetime import datetime
 from math import sin, cos, sqrt, atan2, radians, floor
 
+ask_dest = raw_input("Masukkan nama:")
+
+ask_latitude = raw_input("Masukkan latitude:")
+ask_latitude = int(ask_latitude)
+
+ask_longitude = raw_input("Masukkan longitude:")
+ask_longitude = int(ask_longitude)
+
+start  = raw_input("Mulai? (y):")
+if start == "y":
+    t1 = datetime.now()
+
 MCAST_GRP = '224.1.1.1'
 MCAST_PORT = 5007
 
@@ -22,17 +34,29 @@ def sendfeedback():
     while True:
         msg = server.recv(10240)
         msg_recv = pickle.loads(msg)
+
         global message
         message = msg_recv[0]
-        global latitude
-        latitude = msg_recv[1]
-        print latitude
-        global longitude
-        longitude = msg_recv[2]
-        print longitude
-        break
 
-t1 = datetime.now()
+        global dest
+        dest = msg_recv[1]
+
+        global limit_sec
+        limit_sec = msg_recv[2]
+
+        global hop
+        hop = msg_recv[3] - 1
+
+        global latitude
+        latitude = msg_recv[4]
+
+        global longitude
+        longitude = msg_recv[5]
+
+        global dist
+        dist = msg_recv[6]
+
+        break
 
 threads = []
 t_sendfeedback = threading.Thread(target=sendfeedback)
@@ -42,8 +66,19 @@ t_sendfeedback.start()
 def init_msg():
     msg = []
     msg.append(message)
+    msg.append(dest)
+
+    t2 = datetime.now()
+    diff_sec = t2 - t1
+    global limit_sec_new
+    limit_sec_new = limit_sec - diff_sec.seconds
+    msg.append(limit_sec_new)
+
+    msg.append(hop)
     msg.append(latitude)
     msg.append(longitude)
+    msg.append(dist)
+
     msg = pickle.dumps(msg)
     return msg
 
@@ -51,8 +86,8 @@ def getDist():
     # approximate radius of earth in km
     R = 6373.0
 
-    lat1 = radians(52.406374)
-    lon1 = radians(16.925168)
+    lat1 = radians(ask_latitude)
+    lon1 = radians(ask_longitude)
     lat2 = radians(latitude)
     lon2 = radians(longitude)
 
@@ -67,9 +102,19 @@ def getDist():
 
 while True:
     try:
-        if getDist() == 100: # Jarak tujuan pesan
+        if dest == ask_dest:  # Tujuan pesan
+            print message
+            break
+        if dist == getDist():  # Jarak tujuan pesan
             print message
             break
         client.sendto(init_msg(), (MCAST_GRP, MCAST_PORT))
+        if limit_sec_new == 0:
+            print "Umur pesan habis"
+            break
+        if hop == 0:
+            print message
+            print "Max hop terpenuhi"
+            break
     except NameError:
         continue
