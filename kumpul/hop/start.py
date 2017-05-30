@@ -26,7 +26,5 @@ def init_msg():
     msg = pickle.dumps(msg)
     return msg
 
-time.sleep(1)
-
 while True:
     client.sendto(init_msg(), (MCAST_GRP, MCAST_PORT))
